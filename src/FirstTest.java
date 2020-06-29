@@ -179,6 +179,7 @@ public class FirstTest {
         String xpath_locator = "/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout[1]/android.widget.FrameLayout[2]/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.ListView";
         String id_locator = "org.wikipedia:id/search_results_list";
         List<WebElement> elements = driver.findElements(By.xpath(xpath_locator));
+        //List<WebElement> elements = driver.findElements(By.id(id_locator));
         System.out.println("elements = " + elements);
         List<String> actual = new ArrayList<>();
 
