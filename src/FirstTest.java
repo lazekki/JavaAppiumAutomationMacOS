@@ -1,6 +1,4 @@
 import io.appium.java_client.AppiumDriver;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -163,6 +161,8 @@ public class FirstTest {
     @Test
     public void testCheckSearchResultAndCancelSearch() {
 
+        String id_locator = "org.wikipedia:id/page_list_item_container";
+
         waitForElementAndClick(
                 By.xpath("//*[contains(@text,'Search Wikipedia')]"),
                 "Cannot find 'Search Wikipedia' input",
@@ -176,10 +176,14 @@ public class FirstTest {
                 10
         );
 
-        String xpath_locator = "/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout[1]/android.widget.FrameLayout[2]/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.ListView";
-        String id_locator = "org.wikipedia:id/search_results_list";
-        List<WebElement> elements = driver.findElements(By.xpath(xpath_locator));
-        //List<WebElement> elements = driver.findElements(By.id(id_locator));
+        waitForElementPresent(
+                By.id(id_locator),
+                "Doesn't get search result list",
+                15
+        );
+
+        List<WebElement> elements = driver.findElements(By.id(id_locator));
+
         System.out.println("elements = " + elements);
         List<String> actual = new ArrayList<>();
 
@@ -189,7 +193,7 @@ public class FirstTest {
             actual.add(item.getText());
         }
 
-        MatcherAssert.assertThat(String.valueOf(actual), (actual.size() > 0));
+        assertThat(String.valueOf(actual), (actual.size() > 1));
 
         waitForElementAndClear(
                 By.id("org.wikipedia:id/search_src_text"),
@@ -204,7 +208,7 @@ public class FirstTest {
         );
 
         waitForElementNotPresent(
-                By.id("org.wikipedia:id/search_results_list"),
+                By.id(id_locator),
                 "List with search result found, what is not correct",
                 10
         );
