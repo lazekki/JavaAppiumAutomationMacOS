@@ -1,4 +1,5 @@
 import io.appium.java_client.AppiumDriver;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Assert;
@@ -12,6 +13,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -174,18 +176,19 @@ public class FirstTest {
                 10
         );
 
-        WebElement element = driver.findElement(By.id("org.wikipedia:id/search_results_list"));
-        System.out.println("element = " + element);
-        //List<String> actual = new ArrayList<>();
+        String xpath_locator = "/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout[1]/android.widget.FrameLayout[2]/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.ListView";
+        String id_locator = "org.wikipedia:id/search_results_list";
+        List<WebElement> elements = driver.findElements(By.xpath(xpath_locator));
+        System.out.println("elements = " + elements);
+        List<String> actual = new ArrayList<>();
 
-//        for (WebElement item : elements) {
-//            actual.add(item.getText());
-//        }
-//        System.out.println("actual.size() = " + actual.size());
-//        System.out.println("actual = " + actual);
+        Iterator<WebElement> iterator = elements.iterator();
+        while (iterator.hasNext()) {
+            WebElement item = iterator.next();
+            actual.add(item.getText());
+        }
 
-
-//        assertThat(actual, Matchers.hasSize(4));
+        MatcherAssert.assertThat(String.valueOf(actual), (actual.size() > 0));
 
         waitForElementAndClear(
                 By.id("org.wikipedia:id/search_src_text"),
