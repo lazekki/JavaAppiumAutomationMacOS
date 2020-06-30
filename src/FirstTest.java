@@ -208,7 +208,7 @@ public class FirstTest {
     @Test
     public void testMatchSearchResults() {
 
-        String search_string = "Moscow";
+        String search_string = "Java";
         String id_locator = "org.wikipedia:id/page_list_item_title";
 
         waitForElementAndClick(
@@ -241,25 +241,6 @@ public class FirstTest {
         for (String item : actual) {
             assertThat(search_string, item.contains(search_string));
         }
-
-        waitForElementAndClear(
-                By.id("org.wikipedia:id/search_src_text"),
-                "Cannot find search field",
-                10
-        );
-
-        waitForElementAndClick(
-                By.id("org.wikipedia:id/search_close_btn"),
-                "Cannot find X to cancel search",
-                10
-        );
-
-        waitForElementNotPresent(
-                By.id(id_locator),
-                "List with search result found, what is not correct",
-                10
-        );
-
     }
 
     private boolean assertElementHasText(By by, String expected_text, String error_message) {
