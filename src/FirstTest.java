@@ -1,4 +1,5 @@
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -6,7 +7,6 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.net.URL;
@@ -161,7 +161,7 @@ public class FirstTest {
     @Test
     public void testCheckSearchResultAndCancelSearch() {
 
-        String id_locator = "org.wikipedia:id/page_list_item_container";
+        String id_locator = "org.wikipedia:id/page_list_item_title";
 
         waitForElementAndClick(
                 By.xpath("//*[contains(@text,'Search Wikipedia')]"),
@@ -171,7 +171,7 @@ public class FirstTest {
 
         waitForElementAndSendKeys(
                 By.xpath("//*[contains(@text,'Search…')]"),
-                "Java",
+                "Moscow",
                 "Cannot find search input",
                 10
         );
@@ -179,18 +179,15 @@ public class FirstTest {
         waitForElementPresent(
                 By.id(id_locator),
                 "Doesn't get search result list",
-                15
+                30
         );
 
         List<WebElement> elements = driver.findElements(By.id(id_locator));
-
-        System.out.println("elements = " + elements);
         List<String> actual = new ArrayList<>();
 
         Iterator<WebElement> iterator = elements.iterator();
         while (iterator.hasNext()) {
-            WebElement item = iterator.next();
-            actual.add(item.getText());
+            actual.add(iterator.next().getAttribute("text"));
         }
 
         assertThat(String.valueOf(actual), (actual.size() > 1));
