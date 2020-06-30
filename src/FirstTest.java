@@ -161,7 +161,7 @@ public class FirstTest {
     @Test
     public void testCheckSearchResultAndCancelSearch() {
 
-        String id_locator = "org.wikipedia:id/page_list_item_title";
+        String id_locator = "org.wikipedia:id/page_list_item_container";
 
         waitForElementAndClick(
                 By.xpath("//*[contains(@text,'Search Wikipedia')]"),
@@ -183,6 +183,54 @@ public class FirstTest {
         );
 
         List<WebElement> elements = driver.findElements(By.id(id_locator));
+        assertThat(String.valueOf(elements), (elements.size() > 1));
+
+        waitForElementAndClear(
+                By.id("org.wikipedia:id/search_src_text"),
+                "Cannot find search field",
+                10
+        );
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/search_close_btn"),
+                "Cannot find X to cancel search",
+                10
+        );
+
+        waitForElementNotPresent(
+                By.id(id_locator),
+                "List with search result found, what is not correct",
+                10
+        );
+
+    }
+
+    @Test
+    public void testMatchSearchResults() {
+
+        String search_string = "Moscow";
+        String id_locator = "org.wikipedia:id/page_list_item_title";
+
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find 'Search Wikipedia' input",
+                10
+        );
+
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text,'Search…')]"),
+                search_string,
+                "Cannot find search input",
+                10
+        );
+
+        waitForElementPresent(
+                By.id(id_locator),
+                "Doesn't get search result list",
+                30
+        );
+
+        List<WebElement> elements = driver.findElements(By.id(id_locator));
         List<String> actual = new ArrayList<>();
 
         Iterator<WebElement> iterator = elements.iterator();
@@ -190,7 +238,9 @@ public class FirstTest {
             actual.add(iterator.next().getAttribute("text"));
         }
 
-        assertThat(String.valueOf(actual), (actual.size() > 1));
+        for (String item : actual) {
+            assertThat(search_string, item.contains(search_string));
+        }
 
         waitForElementAndClear(
                 By.id("org.wikipedia:id/search_src_text"),
