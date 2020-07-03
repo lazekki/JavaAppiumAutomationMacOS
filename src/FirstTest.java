@@ -11,11 +11,13 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.net.URL;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -28,13 +30,13 @@ public class FirstTest {
     public void setUp() throws Exception {
         DesiredCapabilities capabilities = new DesiredCapabilities();
 
-        capabilities.setCapability("platformName","Android");
-        capabilities.setCapability("deviceName","emulator-5554");
-        capabilities.setCapability("platformVersion","9.0");
-        capabilities.setCapability("automationName","Appium");
-        capabilities.setCapability("appPackage","org.wikipedia");
-        capabilities.setCapability("appActivity","main.MainActivity");
-        capabilities.setCapability("app","/Users/olgazaharenko/Desktop/JavaAppiumAutomationMacOS/apks/org.wikipedia.apk");
+        capabilities.setCapability("platformName", "Android");
+        capabilities.setCapability("deviceName", "emulator-5554");
+        capabilities.setCapability("platformVersion", "9.0");
+        capabilities.setCapability("automationName", "Appium");
+        capabilities.setCapability("appPackage", "org.wikipedia");
+        capabilities.setCapability("appActivity", "main.MainActivity");
+        capabilities.setCapability("app", "/Users/olgazaharenko/Desktop/JavaAppiumAutomationMacOS/apks/org.wikipedia.apk");
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
     }
@@ -105,9 +107,9 @@ public class FirstTest {
     }
 
     @Test
-    public void testCompareArticleTitle()  {
+    public void testCompareArticleTitle() {
 
-    waitForElementAndClick(
+        waitForElementAndClick(
                 By.xpath("//*[contains(@text,'Search Wikipedia')]"),
                 "Cannot find 'Search Wikipedia' input",
                 5
@@ -142,7 +144,7 @@ public class FirstTest {
     }
 
     @Test
-    public void testSwipeArticle()  {
+    public void testSwipeArticle() {
 
         waitForElementAndClick(
                 By.xpath("//*[contains(@text,'Search Wikipedia')]"),
@@ -176,6 +178,40 @@ public class FirstTest {
 
         swipeUp(getPointOption(x, start_y), getPointOption(x, end_y), 10);
 
+    }
+
+    @Test
+    public void testSwipeArticleDownToPageFooter() {
+
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find 'Search Wikipedia' input",
+                5
+        );
+
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text,'Search…')]"),
+                "Appium",
+                "Cannot find search input",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Appium']"),
+                "Cannot find 'Search Wikipedia' input",
+                5
+        );
+
+        waitForElementPresent(
+                By.id("org.wikipedia:id/view_page_title_text"),
+                "Cannot find article title",
+                15
+        );
+
+        swipeToFindElement(
+                (AndroidDriver) driver,
+                "View page in browser",
+                true);
     }
 
     @Test
@@ -336,4 +372,17 @@ public class FirstTest {
         return new PointOption().withCoordinates(x, y);
     }
 
+    protected void swipeToFindElement(AndroidDriver driver, String elementName, boolean scrollDown) {
+        String listID = ((RemoteWebElement) driver.findElementByAndroidUIAutomator(
+                "new UiSelector().className(\"android.widget.LinearLayout\")")).getId();
+
+        String direction = scrollDown == true ? "down" : "up";
+
+        HashMap<String, String> scrollObject = new HashMap<String, String>();
+        scrollObject.put("direction", direction);
+        scrollObject.put("element", listID);
+        scrollObject.put("text", elementName);
+
+        driver.executeScript("mobile: scrollTo", scrollObject);
+    }
 }
