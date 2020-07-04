@@ -1,8 +1,6 @@
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.touch.WaitOptions;
-import io.appium.java_client.touch.offset.PointOption;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -11,13 +9,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.net.URL;
-import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -171,13 +166,7 @@ public class FirstTest {
                 15
         );
 
-        Dimension size = driver.manage().window().getSize();
-        int x = size.width / 2;
-        int start_y = (int) (size.height * 0.8);
-        int end_y = (int) (start_y * 0.2);
-
-        swipeUp(getPointOption(x, start_y), getPointOption(x, end_y), 10);
-
+        swipeUp(200);
     }
 
     @Test
@@ -208,10 +197,11 @@ public class FirstTest {
                 15
         );
 
-        swipeToFindElement(
-                (AndroidDriver) driver,
-                "View page in browser",
-                true);
+        swipeUpToFindElement(
+                By.xpath("//*[@text='View page in browser']"),
+                "Cannot find the end of article",
+                20
+        );
     }
 
     @Test
@@ -321,6 +311,107 @@ public class FirstTest {
         }
     }
 
+    @Test
+    public void saveFirstArticleToMyList() {
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find 'Search Wikipedia' input",
+                5
+        );
+
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text,'Search…')]"),
+                "Java",
+                "Cannot find search input",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
+                "Cannot find 'Search Wikipedia' input",
+                5
+        );
+
+        waitForElementPresent(
+                By.id("org.wikipedia:id/view_page_title_text"),
+                "Cannot find article title",
+                15
+        );
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.ImageView[@content-desc='More options']"),
+                "Cannot find button to open More article options",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@text='Add to reading list']"),
+                "Cannot find option to add article to reading list",
+                5
+        );
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/onboarding_button"),
+                "Cannot find 'Got it' tip overlay",
+                5
+        );
+
+        waitForElementAndClear(
+                By.id("org.wikipedia:id/text_input"),
+                "Cannot find input to set name of articles folder",
+                5
+        );
+
+        String name_of_folder = "Learning programming";
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/text_input"),
+                name_of_folder,
+                "Cannot put text into articles folder input",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@text='OK']"),
+                "Cannot press OK button to save an article name to reading list",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']"),
+                "Cannot close article, cannot find X link",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.FrameLayout[@content-desc=\"My lists\"]"),
+                "Cannot find navigation button to my list",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@text='" + name_of_folder + "']"),
+                "Cannot find " + name_of_folder + " reading list",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@text='Java (programming language)']"),
+                "Cannot find 'Java (programming language)' article in 'Learning programming' reading list",
+                5
+        );
+
+        swipeElementToLeft(
+                By.xpath("//*[@text='Java (programming language)']"),
+                "Cannot find saved article"
+        );
+
+        waitForElementNotPresent(
+                By.xpath("//*[@text='Java (programming language)']"),
+                "Cannot delete saved article",
+                5
+        );
+    }
+
     private boolean assertElementHasText(By by, String expected_text, String error_message) {
         WebElement element = waitForElementPresent(by, error_message, 5);
         return (element.getAttribute("text").equals(expected_text));
@@ -362,27 +453,57 @@ public class FirstTest {
         return element;
     }
 
-    private void swipeUp(PointOption start, PointOption end, long duration) {
-        AppiumDriver appiumDriver = (AppiumDriver) driver;
-        TouchAction action = new TouchAction(appiumDriver);
-        action.press(start).waitAction(WaitOptions.waitOptions(Duration.ofSeconds(duration))).moveTo(end).release().perform();
+    private void swipeUp(int timeOfSwipe) {
+        TouchAction action = new TouchAction(driver);
+        Dimension size = driver.manage().window().getSize();
+        int x = size.width / 2;
+        int start_y = (int) (size.height * 0.8);
+        int end_y = (int) (size.height * 0.2);
+
+        action
+                .press(x, start_y)
+                .waitAction(timeOfSwipe)
+                .moveTo(x, end_y)
+                .release()
+                .perform();
     }
 
-    private PointOption getPointOption(int x, int y){
-        return new PointOption().withCoordinates(x, y);
+    protected void swipeUpQuick() {
+        swipeUp(200);
     }
 
-    protected void swipeToFindElement(AndroidDriver driver, String elementName, boolean scrollDown) {
-        String listID = ((RemoteWebElement) driver.findElementByAndroidUIAutomator(
-                "new UiSelector().className(\"android.widget.LinearLayout\")")).getId();
+    protected void swipeUpToFindElement(By by, String error_message, int max_swipes) {
+        int already_swiped = 0;
+                while (driver.findElements(by).size() == 0) {
+                    if (already_swiped > max_swipes) {
+                        waitForElementPresent(by, "Cannot find element by swiping up \n" + error_message, 0);
+                        return;
+                    }
 
-        String direction = scrollDown == true ? "down" : "up";
+                    swipeUpQuick();
+                    ++already_swiped;
+                }
+    }
 
-        HashMap<String, String> scrollObject = new HashMap<String, String>();
-        scrollObject.put("direction", direction);
-        scrollObject.put("element", listID);
-        scrollObject.put("text", elementName);
+    protected void swipeElementToLeft(By by, String error_message){
+        WebElement element = waitForElementPresent(
+                by,
+                error_message,
+                10);
 
-        driver.executeScript("mobile: scrollTo", scrollObject);
+        int left_x = element.getLocation().getX(); //left_x will contain left side point of the olement by X axis
+        int right_x = element.getSize().getWidth() + left_x;
+        int upper_y = element.getLocation().getY();
+        int lower_y = element.getSize().getHeight() + upper_y;
+        int middle_y = (upper_y + lower_y) / 2;
+
+        TouchAction action = new TouchAction(driver);
+        action
+                .press(right_x, middle_y)
+                .waitAction(300)
+                .moveTo(left_x, middle_y)
+                .release()
+                .perform();
+
     }
 }
