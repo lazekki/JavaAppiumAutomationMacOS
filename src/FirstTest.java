@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -412,6 +413,162 @@ public class FirstTest {
         );
     }
 
+    @Test
+    public void testAmountOfNotEmptySearch() {
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find 'Search Wikipedia' input",
+                5
+        );
+
+        String search_line = "Linkin Park Discography";
+
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text,'Search…')]"),
+                search_line,
+                "Cannot find search input",
+                5
+        );
+
+        String search_result_locator = "//*[@resource-id='org.wikipedia:id/search_results/list']/*[@resource-id='org.wikipedia:id/page_list_item_container']";
+
+        waitForElementPresent(
+                By.xpath(search_result_locator),
+                "Cannot find anything by the request" + search_line,
+                15
+        );
+
+        Assert.assertTrue(
+                "We found too few results",
+                (getAmountOfElements(
+                        By.xpath(search_result_locator)) > 0)
+        );
+    }
+
+    @Test
+    public void testAmountOfEmptySearch() {
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find 'Search Wikipedia' input",
+                5
+        );
+
+        String search_line = "zxcvasdfqwer";
+
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text,'Search…')]"),
+                search_line,
+                "Cannot find search input",
+                5
+        );
+
+        String search_result_locator = "//*[@resource-id='org.wikipedia:id/search_results/list']/*[@resource-id='org.wikipedia:id/page_list_item_container']";
+        String empty_result_label = "//*[@text='No results found']";
+
+        waitForElementPresent(
+                By.xpath(empty_result_label),
+                "Cannot find empty result label by the request" + search_line,
+                15
+        );
+
+        assertElementNotPresent(
+                By.xpath(search_result_locator),
+                "We found some results by request " + search_line
+        );
+    }
+
+    @Test
+    public void testChangeScreenOrientationOnSearchResults() {
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find 'Search Wikipedia' input",
+                5
+        );
+
+        String search_line = "Java";
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text,'Search…')]"),
+                search_line,
+                "Cannot find search input",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
+                "Cannot find 'Object-oriented programming language' topic searching by " + search_line,
+                15
+        );
+
+        String title_before_rotation = waitForElementAndGetAttribute(
+                By.id("org.wikipedia:id/view_page_title_text"),
+                "text",
+                "Cannot find title of article on portrait mode",
+                15
+        );
+
+        driver.rotate(ScreenOrientation.LANDSCAPE);
+
+        String title_after_rotation = waitForElementAndGetAttribute(
+                By.id("org.wikipedia:id/view_page_title_text"),
+                "text",
+                "Cannot find title of article on landscape mode",
+                15
+        );
+
+        Assert.assertEquals(
+                "Article title have been changed after screen rotation",
+                title_before_rotation,
+                title_after_rotation
+        );
+
+        driver.rotate(ScreenOrientation.PORTRAIT);
+
+        String title_after_second_rotation = waitForElementAndGetAttribute(
+                By.id("org.wikipedia:id/view_page_title_text"),
+                "text",
+                "Cannot find title of article on landscape mode",
+                15
+        );
+
+        Assert.assertEquals(
+                "Article title have been changed after second screen rotation",
+                title_before_rotation,
+                title_after_second_rotation
+        );
+
+    }
+
+    @Test
+    public void testCheckSearchArticleInBackground() {
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find 'Search Wikipedia' input",
+                5
+        );
+
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text,'Search…')]"),
+                "Java",
+                "Cannot find search input",
+                5
+        );
+
+        waitForElementPresent(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
+                "Cannot find 'Search Wikipedia' input",
+                5
+        );
+
+        driver.runAppInBackground(2);
+
+        waitForElementPresent(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
+                "Cannot find article after returning from background",
+                5
+        );
+
+    }
+
     private boolean assertElementHasText(By by, String expected_text, String error_message) {
         WebElement element = waitForElementPresent(by, error_message, 5);
         return (element.getAttribute("text").equals(expected_text));
@@ -474,18 +631,18 @@ public class FirstTest {
 
     protected void swipeUpToFindElement(By by, String error_message, int max_swipes) {
         int already_swiped = 0;
-                while (driver.findElements(by).size() == 0) {
-                    if (already_swiped > max_swipes) {
-                        waitForElementPresent(by, "Cannot find element by swiping up \n" + error_message, 0);
-                        return;
-                    }
+        while (driver.findElements(by).size() == 0) {
+            if (already_swiped > max_swipes) {
+                waitForElementPresent(by, "Cannot find element by swiping up \n" + error_message, 0);
+                return;
+            }
 
-                    swipeUpQuick();
-                    ++already_swiped;
-                }
+            swipeUpQuick();
+            ++already_swiped;
+        }
     }
 
-    protected void swipeElementToLeft(By by, String error_message){
+    protected void swipeElementToLeft(By by, String error_message) {
         WebElement element = waitForElementPresent(
                 by,
                 error_message,
@@ -505,5 +662,21 @@ public class FirstTest {
                 .release()
                 .perform();
 
+    }
+
+    private int getAmountOfElements(By by) {
+        return driver.findElements(by).size();
+    }
+
+    private void assertElementNotPresent(By by, String error_message) {
+        if (getAmountOfElements(by) > 0) {
+            throw new AssertionError(
+                    "An element '" + by.toString() + "' supposed to be not present" + " " + error_message);
+        }
+    }
+
+    private String waitForElementAndGetAttribute(By by, String attribute, String error_message, long timeoutInSeconds) {
+        WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
+        return element.getAttribute(attribute);
     }
 }
