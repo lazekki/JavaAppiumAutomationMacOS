@@ -1,6 +1,8 @@
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.PointOption;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,10 +14,13 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.net.URL;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class FirstTest {
@@ -167,7 +172,12 @@ public class FirstTest {
                 15
         );
 
-        swipeUp(200);
+        Dimension size = driver.manage().window().getSize();
+        int x = size.width / 2;
+        int start_y = (int) (size.height * 0.8);
+        int end_y = (int) (start_y * 0.2);
+
+        swipeUp(getPointOption(x, start_y), getPointOption(x, end_y), 10);
     }
 
     @Test
@@ -313,6 +323,82 @@ public class FirstTest {
     }
 
     @Test
+    public void saveTwoArticlesToMyList() {
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find 'Search Wikipedia' input",
+                5
+        );
+
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text,'Search…')]"),
+                "Java",
+                "Cannot find search input",
+                5
+        );
+
+        String first_article_xpath_text = "Object-oriented programming language";
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='" + first_article_xpath_text + "']"),
+                "Cannot find 'Search Wikipedia' input",
+                5
+        );
+
+        waitForElementPresent(
+                By.id("org.wikipedia:id/view_page_title_text"),
+                "Cannot find article title",
+                15
+        );
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.ImageView[@content-desc='More options']"),
+                "Cannot find button to open More article options",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@text='Add to reading list']"),
+                "Cannot find option to add article to reading list",
+                5
+        );
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/onboarding_button"),
+                "Cannot find 'Got it' tip overlay",
+                5
+        );
+
+        waitForElementAndClear(
+                By.id("org.wikipedia:id/text_input"),
+                "Cannot find input to set name of articles folder",
+                5
+        );
+
+        String name_of_folder = "Java to read";
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/text_input"),
+                name_of_folder,
+                "Cannot put text into articles folder input",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@text='OK']"),
+                "Cannot press OK button to save an article name to reading list",
+                5
+        );
+
+        String second_article_xpath_text = "Set of several computer software products and specifications";
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='" + second_article_xpath_text + "']"),
+                "Cannot find 'Search Wikipedia' input",
+                5
+        );
+
+
+    }
+
+    @Test
     public void saveFirstArticleToMyList() {
         waitForElementAndClick(
                 By.xpath("//*[contains(@text,'Search Wikipedia')]"),
@@ -418,7 +504,7 @@ public class FirstTest {
         waitForElementAndClick(
                 By.xpath("//*[contains(@text,'Search Wikipedia')]"),
                 "Cannot find 'Search Wikipedia' input",
-                5
+                10
         );
 
         String search_line = "Linkin Park Discography";
@@ -427,15 +513,15 @@ public class FirstTest {
                 By.xpath("//*[contains(@text,'Search…')]"),
                 search_line,
                 "Cannot find search input",
-                5
+                10
         );
 
-        String search_result_locator = "//*[@resource-id='org.wikipedia:id/search_results/list']/*[@resource-id='org.wikipedia:id/page_list_item_container']";
-
+        //String search_result_locator = "//*[@resource-id='org.wikipedia:id/search_results_list']/*[@resource-id='org.wikipedia:id/page_list_item_container']";
+        String search_result_locator = "//*[@resource-id='org.wikipedia:id/page_list_item_container']";
         waitForElementPresent(
                 By.xpath(search_result_locator),
-                "Cannot find anything by the request" + search_line,
-                15
+                "Cannot find anything by the request " + search_line,
+                20
         );
 
         Assert.assertTrue(
@@ -559,7 +645,7 @@ public class FirstTest {
                 5
         );
 
-        driver.runAppInBackground(2);
+        driver.runAppInBackground(Duration.ofSeconds(2));
 
         waitForElementPresent(
                 By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
@@ -610,23 +696,28 @@ public class FirstTest {
         return element;
     }
 
-    private void swipeUp(int timeOfSwipe) {
+    private void swipeUp(PointOption start, PointOption end, long duration) {
+        AppiumDriver appiumDriver = (AppiumDriver) driver;
         TouchAction action = new TouchAction(driver);
-        Dimension size = driver.manage().window().getSize();
-        int x = size.width / 2;
-        int start_y = (int) (size.height * 0.8);
-        int end_y = (int) (size.height * 0.2);
-
         action
-                .press(x, start_y)
-                .waitAction(timeOfSwipe)
-                .moveTo(x, end_y)
+                .press(start)
+                .waitAction(WaitOptions.waitOptions(Duration.ofSeconds(duration)))
+                .moveTo(end)
                 .release()
                 .perform();
     }
 
+    private PointOption getPointOption(int x, int y) {
+        return new PointOption().withCoordinates(x, y);
+    }
+
     protected void swipeUpQuick() {
-        swipeUp(200);
+        Dimension size = driver.manage().window().getSize();
+        int x = size.width / 2;
+        int start_y = (int) (size.height * 0.8);
+        int end_y = (int) (start_y * 0.2);
+
+        swipeUp(getPointOption(x, start_y), getPointOption(x, end_y), 10);
     }
 
     protected void swipeUpToFindElement(By by, String error_message, int max_swipes) {
@@ -656,12 +747,11 @@ public class FirstTest {
 
         TouchAction action = new TouchAction(driver);
         action
-                .press(right_x, middle_y)
-                .waitAction(300)
-                .moveTo(left_x, middle_y)
+                .press(getPointOption(right_x, middle_y))
+                .waitAction(WaitOptions.waitOptions(Duration.ofSeconds(300)))
+                .moveTo(getPointOption(left_x, middle_y))
                 .release()
                 .perform();
-
     }
 
     private int getAmountOfElements(By by) {
