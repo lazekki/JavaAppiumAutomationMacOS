@@ -701,7 +701,7 @@ public class FirstTest {
                 15
         );
 
-        driver.rotate(ScreenOrientation.LANDSCAPE);
+        setOrientationLandscape();
 
         String title_after_rotation = waitForElementAndGetAttribute(
                 By.id("org.wikipedia:id/view_page_title_text"),
@@ -716,7 +716,7 @@ public class FirstTest {
                 title_after_rotation
         );
 
-        driver.rotate(ScreenOrientation.PORTRAIT);
+        setOrientationPortrait();
 
         String title_after_second_rotation = waitForElementAndGetAttribute(
                 By.id("org.wikipedia:id/view_page_title_text"),
@@ -919,5 +919,13 @@ public class FirstTest {
     private String waitForElementAndGetAttribute(By by, String attribute, String error_message, long timeoutInSeconds) {
         WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
         return element.getAttribute(attribute);
+    }
+
+    private void setOrientationPortrait() {
+        driver.rotate(ScreenOrientation.PORTRAIT);
+    }
+
+    private void setOrientationLandscape() {
+        driver.rotate(ScreenOrientation.LANDSCAPE);
     }
 }
