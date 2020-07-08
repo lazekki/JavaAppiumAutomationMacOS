@@ -497,9 +497,9 @@ public class FirstTest {
 
         //collect last article into element
         WebElement article_in_list = waitForElementAndClick(
-            By.xpath("//*[@text='Java (software platform)']"),
-                    "Cannot find second article in list",
-                    5
+                By.xpath("//*[@text='Java (software platform)']"),
+                "Cannot find second article in list",
+                5
         );
 
         //assure that this article is second article
@@ -764,6 +764,38 @@ public class FirstTest {
 
     }
 
+    @Test
+    public void testIfArticleHasTitle() {
+        //find the search field
+        waitForElementAndClick(
+            By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find 'Search Wikipedia' input",
+                        5
+        );
+
+        //type 'Java'
+        waitForElementAndSendKeys(
+            By.xpath("//*[contains(@text,'Search…')]"),
+                "Java",
+                        "Cannot find search input",
+                        5
+        );
+
+        //open the topic about Java (Object-oriented programming language)
+        String article_xpath_text = "Object-oriented programming language";
+
+        waitForElementAndClick(
+            By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='"+article_xpath_text+"']"),
+                "Cannot find required article",
+                        10
+        );
+
+        assertElementPresent(
+                By.xpath("//*[@resource-id='org.wikipedia:id/view_page_title_text']//*[@text='Java (programming language)']"),
+                "Cannot get 'title'"
+                );
+    }
+
     private boolean assertElementHasText(By by, String expected_text, String error_message) {
         WebElement element = waitForElementPresent(by, error_message, 5);
         return (element.getAttribute("text").equals(expected_text));
@@ -872,6 +904,16 @@ public class FirstTest {
             throw new AssertionError(
                     "An element '" + by.toString() + "' supposed to be not present" + " " + error_message);
         }
+    }
+
+    private void assertElementPresent(By by, String error_message) {
+        WebElement item = driver.findElement(by);
+        if (item.equals(null)) {
+            throw new AssertionError(
+                    "An expected element supposed not to be presented"
+            );
+        }
+        String item_title = item.getAttribute("title");
     }
 
     private String waitForElementAndGetAttribute(By by, String attribute, String error_message, long timeoutInSeconds) {
