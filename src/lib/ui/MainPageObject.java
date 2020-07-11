@@ -115,7 +115,7 @@ public class MainPageObject {
         TouchAction action = new TouchAction(driver);
         action
                 .press(getPointOption(right_x, middle_y))
-                .waitAction(WaitOptions.waitOptions(Duration.ofSeconds(300)))
+                .waitAction(WaitOptions.waitOptions(Duration.ofSeconds(5)))
                 .moveTo(getPointOption(left_x, middle_y))
                 .release()
                 .perform();
