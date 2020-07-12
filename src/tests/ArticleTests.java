@@ -1,45 +1,21 @@
+package tests;
+
 import lib.CoreTestCase;
-import lib.ui.*;
-import org.junit.Assert;
+import lib.ui.ArticlePageObject;
+import lib.ui.MainPageObject;
+import lib.ui.SearchPageObject;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+public class ArticleTests extends CoreTestCase {
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
-public class FirstTest extends CoreTestCase {
-
-    private MainPageObject MainPageObject;
+    private lib.ui.MainPageObject MainPageObject;
 
     protected void setUp() throws Exception {
 
         super.setUp();
         MainPageObject = new MainPageObject(driver);
-    }
-
-    @Test
-    public void testSearch() {
-
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-
-        SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.waitForSearchResult("Object-oriented programming language");
-    }
-
-    @Test
-    public void testCancelSearch() {
-
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-
-        SearchPageObject.initSearchInput();
-        SearchPageObject.waitForCancelButtonToAppear();
-        SearchPageObject.clickCancelSearch();
-        SearchPageObject.waitForCancelButtonToDisappear();
     }
 
     @Test
@@ -53,7 +29,7 @@ public class FirstTest extends CoreTestCase {
 
         ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
 
-        Assert.assertEquals(
+        assertEquals(
                 "We see unexpected title",
                 "Java (programming language)",
                 ArticlePageObject.getArticleTitle()
@@ -108,113 +84,6 @@ public class FirstTest extends CoreTestCase {
                 "Cannot find the end of article",
                 20
         );
-    }
-
-    @Test
-    public void testIfInputFieldContainsText() {
-
-        MainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/search_container"),
-                "Cannot find search container",
-                5
-        );
-
-        MainPageObject.waitForElementPresent(
-                By.id("org.wikipedia:id/search_src_text"),
-                "Cannot find search_input_field",
-                5
-        );
-
-        MainPageObject.assertElementHasText(
-                By.id("org.wikipedia:id/search_src_text"),
-                "Search..",
-                "Cannot find 'Search..' text within search input field"
-        );
-    }
-
-    @Test
-    public void testCheckSearchResultAndCancelSearch() {
-
-        String id_locator = "org.wikipedia:id/page_list_item_container";
-
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
-                "Cannot find 'Search Wikipedia' input",
-                10
-        );
-
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//*[contains(@text,'Search…')]"),
-                "Moscow",
-                "Cannot find search input",
-                10
-        );
-
-        MainPageObject.waitForElementPresent(
-                By.id(id_locator),
-                "Doesn't get search result list",
-                30
-        );
-
-        List<WebElement> elements = driver.findElements(By.id(id_locator));
-        assertThat(String.valueOf(elements), (elements.size() > 1));
-
-        MainPageObject.waitForElementAndClear(
-                By.id("org.wikipedia:id/search_src_text"),
-                "Cannot find search field",
-                10
-        );
-
-        MainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/search_close_btn"),
-                "Cannot find X to cancel search",
-                10
-        );
-
-        MainPageObject.waitForElementNotPresent(
-                By.id(id_locator),
-                "List with search result found, what is not correct",
-                10
-        );
-
-    }
-
-    @Test
-    public void testMatchSearchResults() {
-
-        String search_string = "Java";
-        String id_locator = "org.wikipedia:id/page_list_item_title";
-
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
-                "Cannot find 'Search Wikipedia' input",
-                10
-        );
-
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//*[contains(@text,'Search…')]"),
-                search_string,
-                "Cannot find search input",
-                10
-        );
-
-        MainPageObject.waitForElementPresent(
-                By.id(id_locator),
-                "Doesn't get search result list",
-                30
-        );
-
-        List<WebElement> elements = driver.findElements(By.id(id_locator));
-        List<String> actual = new ArrayList<>();
-
-        Iterator<WebElement> iterator = elements.iterator();
-        while (iterator.hasNext()) {
-            actual.add(iterator.next().getAttribute("text"));
-        }
-
-        for (String item : actual) {
-            assertThat(search_string, item.contains(search_string));
-        }
     }
 
     @Test
@@ -398,138 +267,39 @@ public class FirstTest extends CoreTestCase {
         );
 
         //assure that this article is second article
-        Assert.assertEquals(second_article_title, article_in_list.getAttribute("text"));
+        assertEquals(second_article_title, article_in_list.getAttribute("text"));
 
-    }
-
-    @Test
-    public void testSaveFirstArticleToMyList() {
-
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-
-        SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.clickByArticleWithSubString("Object-oriented programming language");
-
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
-        ArticlePageObject.waitForTitleElement();
-
-        String article_title = ArticlePageObject.getArticleTitle();
-        String name_of_folder = "Learning programming";
-
-        ArticlePageObject.addArticleToMyList(name_of_folder);
-        ArticlePageObject.closeArticle();
-
-        NavigationUI NavigationUI = new NavigationUI(driver);
-        NavigationUI.clickMyList();
-
-        MyListsPageObject MyListPageObject = new MyListsPageObject(driver);
-        MyListPageObject.openFolderByName(name_of_folder);
-        MyListPageObject.swipeByArticleToDelete(article_title);
-    }
-
-    @Test
-    public void testAmountOfNotEmptySearch() {
-
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-        SearchPageObject.initSearchInput();
-        String search_line = "Linkin Park Discography";
-        SearchPageObject.typeSearchLine(search_line);
-        int amount_of_search_results = SearchPageObject.getAmountOfFoundArticles();
-
-        Assert.assertTrue(
-                "We found too few results",
-                amount_of_search_results > 0
-        );
-
-    }
-
-    @Test
-    public void testAmountOfEmptySearch() {
-
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-        SearchPageObject.initSearchInput();
-        String search_line = "zxcvasdfqwer";
-        SearchPageObject.typeSearchLine(search_line);
-        SearchPageObject.waitForEmptyResultsLabel();
-        SearchPageObject.assertThereIsNoResultOfSearch();
-
-    }
-
-    @Test
-    public void testChangeScreenOrientationOnSearchResults() {
-
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-
-        SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.clickByArticleWithSubString("Object-oriented programming language");
-
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
-
-        String title_before_rotation = ArticlePageObject.getArticleTitle();
-        this.rotateScreenLandscape();
-        String title_after_rotation = ArticlePageObject.getArticleTitle();
-
-        Assert.assertEquals(
-                "Article title have been changed after screen rotation",
-                title_before_rotation,
-                title_after_rotation
-        );
-
-        this.rotateScreenPortrait();
-        String title_after_second_rotation = ArticlePageObject.getArticleTitle();
-
-        Assert.assertEquals(
-                "Article title have been changed after second screen rotation",
-                title_before_rotation,
-                title_after_second_rotation
-        );
-    }
-
-    @Test
-    public void testCheckSearchArticleInBackground() {
-
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-
-        SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.waitForSearchResult("Object-oriented programming language");
-
-        this.backgroundApp(2);
-
-        SearchPageObject.waitForSearchResult("Object-oriented programming language");
     }
 
     @Test
     public void testIfArticleHasTitle() {
         //find the search field
         MainPageObject.waitForElementAndClick(
-            By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
                 "Cannot find 'Search Wikipedia' input",
-                        5
+                5
         );
 
         //type 'Java'
         MainPageObject.waitForElementAndSendKeys(
-            By.xpath("//*[contains(@text,'Search…')]"),
+                By.xpath("//*[contains(@text,'Search…')]"),
                 "Java",
-                        "Cannot find search input",
-                        5
+                "Cannot find search input",
+                5
         );
 
         //open the topic about Java (Object-oriented programming language)
         String article_xpath_text = "Object-oriented programming language";
 
         MainPageObject.waitForElementAndClick(
-            By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='"+article_xpath_text+"']"),
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='"+article_xpath_text+"']"),
                 "Cannot find required article",
-                        10
+                10
         );
 
         MainPageObject.assertElementPresent(
                 By.xpath("//*[@resource-id='org.wikipedia:id/view_page_title_text']//*[@text='Java (programming language)']"),
                 "Cannot get 'title'"
-                );
+        );
     }
 }
