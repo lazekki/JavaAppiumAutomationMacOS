@@ -6,7 +6,6 @@ import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -147,11 +146,4 @@ public class MainPageObject {
         return element.getAttribute(attribute);
     }
 
-    public void setOrientationPortrait() {
-        driver.rotate(ScreenOrientation.PORTRAIT);
-    }
-
-    public void setOrientationLandscape() {
-        driver.rotate(ScreenOrientation.LANDSCAPE);
-    }
 }
