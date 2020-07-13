@@ -2,6 +2,7 @@ package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 public class SearchPageObject extends MainPageObject {
 
@@ -12,7 +13,9 @@ public class SearchPageObject extends MainPageObject {
         SEARCH_CANCEL_BUTTON = "org.wikipedia:id/search_close_btn",
         SEARCH_RESULT_BY_SUBSTRING_TPL = "//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='{SUBSTRING}']",
         SEARCH_RESULT_ELEMENT = "//*[@resource-id='org.wikipedia:id/page_list_item_container']",
-        SEARCH_EMPTY_RESULT_ELEMENT = "//*[@text='No results found']";
+        SEARCH_EMPTY_RESULT_ELEMENT = "//*[@text='No results found']",
+        ARTICLE_TITLE_ID = "org.wikipedia:id/view_page_title_text",
+        ARTICLE_TITLE_XPATH = "//*[@text='Java (software platform)']";
 
     public SearchPageObject(AppiumDriver driver) {
         super(driver);
@@ -114,6 +117,20 @@ public class SearchPageObject extends MainPageObject {
                 By.id(SEARCH_INPUT_ID),
                 "Cannot find search field",
                 10
+        );
+    }
+
+    public void assertThereIsArticleWithTitle() {
+        this.waitForElementPresent(By.id(ARTICLE_TITLE_ID),
+                        "Cannot find article title",
+                15);
+    }
+
+    public WebElement collectSearchResultAsElement() {
+        return this.waitForElementAndClick(
+                By.xpath(ARTICLE_TITLE_XPATH),
+                "Cannot find article title",
+                15
         );
     }
 }
