@@ -8,6 +8,7 @@ public class SearchPageObject extends MainPageObject {
     private static final String
         SEARCH_INIT_ELEMENT = "//*[contains(@text,'Search Wikipedia')]",
         SEARCH_INPUT = "//*[contains(@text,'Search…')]",
+        SEARCH_INPUT_ID = "org.wikipedia:id/search_src_text",
         SEARCH_CANCEL_BUTTON = "org.wikipedia:id/search_close_btn",
         SEARCH_RESULT_BY_SUBSTRING_TPL = "//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='{SUBSTRING}']",
         SEARCH_RESULT_ELEMENT = "//*[@resource-id='org.wikipedia:id/page_list_item_container']",
@@ -105,6 +106,14 @@ public class SearchPageObject extends MainPageObject {
         this.assertElementNotPresent(
                 By.xpath(SEARCH_RESULT_ELEMENT),
                 "We supposed not to find any results"
+        );
+    }
+
+    public void clearSearchInput() {
+        this.waitForElementAndClear(
+                By.id(SEARCH_INPUT_ID),
+                "Cannot find search field",
+                10
         );
     }
 }

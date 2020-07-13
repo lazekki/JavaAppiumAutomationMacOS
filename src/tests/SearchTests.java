@@ -23,7 +23,6 @@ public class SearchTests extends CoreTestCase {
         MainPageObject = new MainPageObject(driver);
     }
 
-
     @Test
     public void testSearch() {
 
@@ -46,50 +45,17 @@ public class SearchTests extends CoreTestCase {
     }
 
     @Test
+    //Ex3 - refactoring for Ex8 homework
     public void testCheckSearchResultAndCancelSearch() {
 
-        String id_locator = "org.wikipedia:id/page_list_item_container";
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("Moscow");
+        assertThat("Amount of found articles more than 0 ", (SearchPageObject.getAmountOfFoundArticles() > 0));
 
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
-                "Cannot find 'Search Wikipedia' input",
-                10
-        );
-
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//*[contains(@text,'Search…')]"),
-                "Moscow",
-                "Cannot find search input",
-                10
-        );
-
-        MainPageObject.waitForElementPresent(
-                By.id(id_locator),
-                "Doesn't get search result list",
-                30
-        );
-
-        List<WebElement> elements = driver.findElements(By.id(id_locator));
-        assertThat(String.valueOf(elements), (elements.size() > 1));
-
-        MainPageObject.waitForElementAndClear(
-                By.id("org.wikipedia:id/search_src_text"),
-                "Cannot find search field",
-                10
-        );
-
-        MainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/search_close_btn"),
-                "Cannot find X to cancel search",
-                10
-        );
-
-        MainPageObject.waitForElementNotPresent(
-                By.id(id_locator),
-                "List with search result found, what is not correct",
-                10
-        );
-
+        SearchPageObject.clearSearchInput();
+        SearchPageObject.clickCancelSearch();
+        SearchPageObject.assertThereIsNoResultOfSearch();
     }
 
     @Test
