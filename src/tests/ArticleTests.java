@@ -87,33 +87,12 @@ public class ArticleTests extends CoreTestCase {
 
     @Test
     public void testIfArticleHasTitle() {
-        //find the search field
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
-                "Cannot find 'Search Wikipedia' input",
-                5
-        );
 
-        //type 'Java'
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//*[contains(@text,'Search…')]"),
-                "Java",
-                "Cannot find search input",
-                5
-        );
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
 
-        //open the topic about Java (Object-oriented programming language)
-        String article_xpath_text = "Object-oriented programming language";
-
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='"+article_xpath_text+"']"),
-                "Cannot find required article",
-                10
-        );
-
-        MainPageObject.assertElementPresent(
-                By.xpath("//*[@resource-id='org.wikipedia:id/view_page_title_text']//*[@text='Java (programming language)']"),
-                "Cannot get 'title'"
-        );
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("Java");
+        SearchPageObject.clickByArticleWithSubString("Object-oriented programming language");
+        SearchPageObject.assertThereIsArticleWithTitle();
     }
 }

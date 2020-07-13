@@ -15,7 +15,8 @@ public class SearchPageObject extends MainPageObject {
         SEARCH_RESULT_ELEMENT = "//*[@resource-id='org.wikipedia:id/page_list_item_container']",
         SEARCH_EMPTY_RESULT_ELEMENT = "//*[@text='No results found']",
         ARTICLE_TITLE_ID = "org.wikipedia:id/view_page_title_text",
-        ARTICLE_TITLE_XPATH = "//*[@text='Java (software platform)']";
+        ARTICLE_TITLE_XPATH = "//*[@text='Java (software platform)']",
+        SEARCH_RESULT_ARTICLE_TITLE = "//*[@resource-id='org.wikipedia:id/view_page_title_text']//*[@text='Java (programming language)']";
 
     public SearchPageObject(AppiumDriver driver) {
         super(driver);
@@ -131,6 +132,13 @@ public class SearchPageObject extends MainPageObject {
                 By.xpath(ARTICLE_TITLE_XPATH),
                 "Cannot find article title",
                 15
+        );
+    }
+
+    public void assertIfArticleHasTitle() {
+        this.assertElementPresent(
+                By.xpath(SEARCH_RESULT_ARTICLE_TITLE),
+                "Cannot get 'title'"
         );
     }
 }
