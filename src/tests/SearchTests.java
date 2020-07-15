@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -143,5 +144,23 @@ public class SearchTests extends CoreTestCase {
                 "Search..",
                 "Cannot find 'Search..' text within search input field"
         );
+    }
+
+    @Test
+    public void testListOfSearchResults() {
+
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("Java");
+
+        HashMap<String, String> testData = new HashMap<String, String>();
+        testData.put("Java", "Island of Indonesia");
+        testData.put("Java (programming language)", "Object-oriented programming language");
+        testData.put("Java (software platform)", "Set of several computer software products and specifications");
+
+        for (String i : testData.keySet()) {
+           SearchPageObject.waitForElementByTitleAndDescription(i, testData.get(i));
+        }
     }
 }

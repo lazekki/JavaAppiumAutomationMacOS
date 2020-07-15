@@ -16,7 +16,15 @@ public class SearchPageObject extends MainPageObject {
         SEARCH_EMPTY_RESULT_ELEMENT = "//*[@text='No results found']",
         ARTICLE_TITLE_ID = "org.wikipedia:id/view_page_title_text",
         ARTICLE_TITLE_XPATH = "//*[@text='Java (software platform)']",
-        SEARCH_RESULT_ARTICLE_TITLE = "//*[@resource-id='org.wikipedia:id/view_page_title_text']//*[@text='Java (programming language)']";
+        SEARCH_RESULT_ARTICLE_TITLE = "//*[@resource-id='org.wikipedia:id/view_page_title_text']//*[@text='Java (programming language)']",
+        SEARCH_RESULT_ARTICLE_ITEM_CONTAINER_TPL = "//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
+                "//*[@resource-id-'//org.wikipedia:id/page_list_item_title//*[@text='{TITLE_SUBSTRING}']" +
+                "//*[@resource-id='org.wikipedia:id/page_list_item_description']//*[@text='{DESCRIPTION_SUBSTRING}']";
+        //SEARCH_RESULT_ARTICLE_TITLE_TPL = "//*[@resource-id='org.wikipedia:id/view_page_title_text']//*[@text='{SUBSTRING}']",
+        //SEARCH_RESULT_ARTICLE_DESCRIPTION_TPL = "//*[@resource-id='org.wikipedia:id/page_list_item_description']//*[@text='{SUBSTRING}']";
+        //org.wikipedia:id/page_list_item_container
+        //org.wikipedia:id/page_list_item_title
+        //org.wikipedia:id/page_list_item_description
 
     public SearchPageObject(AppiumDriver driver) {
         super(driver);
@@ -25,6 +33,11 @@ public class SearchPageObject extends MainPageObject {
     /* TEMPLATES METHODS */
     private static String getResultSearchElement(String substring) {
         return SEARCH_RESULT_BY_SUBSTRING_TPL.replace("{SUBSTRING}", substring);
+    }
+
+    private static String getResultSearchElementItem(String title_substring, String description_substring) {
+        String temp = SEARCH_RESULT_ARTICLE_ITEM_CONTAINER_TPL.replace("{TITLE_SUBSTRING}", title_substring);
+        return temp.replace("{DESCRIPTION_SUBSTRING}", description_substring);
     }
     /* TEMPLATES METHODS */
 
@@ -139,6 +152,15 @@ public class SearchPageObject extends MainPageObject {
         this.assertElementPresent(
                 By.xpath(SEARCH_RESULT_ARTICLE_TITLE),
                 "Cannot get 'title'"
+        );
+    }
+
+    //Ex8*
+    public void waitForElementByTitleAndDescription(String title, String description) {
+        String search_result_item_xpath = getResultSearchElementItem(title, description);
+        this.waitForElementPresent(By.xpath(search_result_item_xpath),
+                "Cannot find and click search result with title " + title + " and description " + description,
+                10
         );
     }
 }
