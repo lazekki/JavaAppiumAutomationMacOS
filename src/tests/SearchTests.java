@@ -160,7 +160,7 @@ public class SearchTests extends CoreTestCase {
         testData.put("Java (software platform)", "Set of several computer software products and specifications");
 
         for (String i : testData.keySet()) {
-           SearchPageObject.waitForElementByTitleAndDescription(i, testData.get(i));
+            SearchPageObject.waitForElementByTitleAndDescription(i, testData.get(i));
         }
     }
 }

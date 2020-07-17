@@ -17,11 +17,11 @@ public class SearchPageObject extends MainPageObject {
         ARTICLE_TITLE_ID = "org.wikipedia:id/view_page_title_text",
         ARTICLE_TITLE_XPATH = "//*[@text='Java (software platform)']",
         SEARCH_RESULT_ARTICLE_TITLE = "//*[@resource-id='org.wikipedia:id/view_page_title_text']//*[@text='Java (programming language)']",
-        SEARCH_RESULT_ARTICLE_ITEM_CONTAINER_TPL = "//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
-                "//*[@resource-id-'//org.wikipedia:id/page_list_item_title//*[@text='{TITLE_SUBSTRING}']" +
-                "//*[@resource-id='org.wikipedia:id/page_list_item_description']//*[@text='{DESCRIPTION_SUBSTRING}']";
-        //SEARCH_RESULT_ARTICLE_TITLE_TPL = "//*[@resource-id='org.wikipedia:id/view_page_title_text']//*[@text='{SUBSTRING}']",
-        //SEARCH_RESULT_ARTICLE_DESCRIPTION_TPL = "//*[@resource-id='org.wikipedia:id/page_list_item_description']//*[@text='{SUBSTRING}']";
+        SEARCH_RESULT_ARTICLE_ITEM_CONTAINER_TPL =
+                "//*[@resource-id='org.wikipedia:id/page_list_item_container']"
+              + "/[@resource-id='org.wikipedia:id/view_page_title_text'][@text='{TITLE_SUBSTRING}']"
+              + "/ ../"
+              + "[@resource-id='org.wikipedia:id/page_list_item_description'][@text='{DESCRIPTION_SUBSTRING}']";
         //org.wikipedia:id/page_list_item_container
         //org.wikipedia:id/page_list_item_title
         //org.wikipedia:id/page_list_item_description
@@ -35,7 +35,7 @@ public class SearchPageObject extends MainPageObject {
         return SEARCH_RESULT_BY_SUBSTRING_TPL.replace("{SUBSTRING}", substring);
     }
 
-    private static String getResultSearchElementItem(String title_substring, String description_substring) {
+    public static String getResultSearchElementItem(String title_substring, String description_substring) {
         String temp = SEARCH_RESULT_ARTICLE_ITEM_CONTAINER_TPL.replace("{TITLE_SUBSTRING}", title_substring);
         return temp.replace("{DESCRIPTION_SUBSTRING}", description_substring);
     }
