@@ -18,13 +18,9 @@ public class SearchPageObject extends MainPageObject {
         ARTICLE_TITLE_XPATH = "//*[@text='Java (software platform)']",
         SEARCH_RESULT_ARTICLE_TITLE = "//*[@resource-id='org.wikipedia:id/view_page_title_text']//*[@text='Java (programming language)']",
         SEARCH_RESULT_ARTICLE_ITEM_CONTAINER_TPL =
-                "//*[@resource-id='org.wikipedia:id/page_list_item_container']"
-              + "/[@resource-id='org.wikipedia:id/view_page_title_text'][@text='{TITLE_SUBSTRING}']"
-              + "/ ../"
-              + "[@resource-id='org.wikipedia:id/page_list_item_description'][@text='{DESCRIPTION_SUBSTRING}']";
-        //org.wikipedia:id/page_list_item_container
-        //org.wikipedia:id/page_list_item_title
-        //org.wikipedia:id/page_list_item_description
+                "//*[@resource-id='org.wikipedia:id/search_container']"
+              + "//*[@resource-id='org.wikipedia:id/page_list_item_container']"
+              + "//*[@text='{TITLE_SUBSTRING}' or @text='{DESCRIPTION_SUBSTRING}']";
 
     public SearchPageObject(AppiumDriver driver) {
         super(driver);
