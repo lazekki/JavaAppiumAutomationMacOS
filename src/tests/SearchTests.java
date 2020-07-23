@@ -16,6 +16,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class SearchTests extends CoreTestCase {
 
+    private static final String
+            CONTAINS_TEXT_SEARCH = "//*[contains(@text,'Search…')]",
+            CONTAINS_TEXT_SEARCH_WIKIPEDIA = "//*[contains(@text,'Search Wikipedia')]",
+            ORG_WIKIPEDIA_ID_SEARCH_CONTAINER = "org.wikipedia:id/search_container",
+            ORG_WIKIPEDIA_ID_SEARCH_SRC_TEXT = "org.wikipedia:id/search_src_text";
+
     private lib.ui.MainPageObject MainPageObject;
 
     protected void setUp() throws Exception {
@@ -66,20 +72,20 @@ public class SearchTests extends CoreTestCase {
         String id_locator = "org.wikipedia:id/page_list_item_title";
 
         MainPageObject.waitForElementAndClick(
-                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                CONTAINS_TEXT_SEARCH_WIKIPEDIA,
                 "Cannot find 'Search Wikipedia' input",
                 10
         );
 
         MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//*[contains(@text,'Search…')]"),
+                CONTAINS_TEXT_SEARCH,
                 search_string,
                 "Cannot find search input",
                 10
         );
 
         MainPageObject.waitForElementPresent(
-                By.id(id_locator),
+                id_locator,
                 "Doesn't get search result list",
                 30
         );
@@ -128,19 +134,19 @@ public class SearchTests extends CoreTestCase {
     public void testIfInputFieldContainsText() {
 
         MainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/search_container"),
+                ORG_WIKIPEDIA_ID_SEARCH_CONTAINER,
                 "Cannot find search container",
                 5
         );
 
         MainPageObject.waitForElementPresent(
-                By.id("org.wikipedia:id/search_src_text"),
+                ORG_WIKIPEDIA_ID_SEARCH_SRC_TEXT,
                 "Cannot find search_input_field",
                 5
         );
 
         MainPageObject.assertElementHasText(
-                By.id("org.wikipedia:id/search_src_text"),
+                ORG_WIKIPEDIA_ID_SEARCH_SRC_TEXT,
                 "Search..",
                 "Cannot find 'Search..' text within search input field"
         );
