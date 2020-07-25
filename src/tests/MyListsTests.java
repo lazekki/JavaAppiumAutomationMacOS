@@ -5,6 +5,8 @@ import lib.ui.ArticlePageObject;
 import lib.ui.MyListsPageObject;
 import lib.ui.NavigationUI;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.ArticlePageObjectFactory;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
@@ -16,15 +18,15 @@ public class MyListsTests extends CoreTestCase {
             READING_LIST_REMOVE_OPTION_ID = "id:org.wikipedia:id/reading_list_item_remove_text";
 
     @Test
-    public void testSaveFirstArticleToMyList() {
+    public void testSaveFirstArticleToMyList() throws Exception {
 
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
 
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.clickByArticleWithSubString("Object-oriented programming language");
 
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         ArticlePageObject.waitForTitleElement();
 
         String article_title = ArticlePageObject.getArticleTitle();
@@ -43,8 +45,8 @@ public class MyListsTests extends CoreTestCase {
 
     @Test
     //Ex5 - refactoring for Ex8 homework
-    public void testSaveTwoArticlesToMyListThenDeleteOneAndCheckLast() {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+    public void testSaveTwoArticlesToMyListThenDeleteOneAndCheckLast() throws Exception {
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
 
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
@@ -80,7 +82,5 @@ public class MyListsTests extends CoreTestCase {
 
         WebElement article_in_list = SearchPageObject.collectSearchResultAsElement();
         assertEquals(second_article_title, article_in_list.getAttribute("text"));
-
     }
-
 }

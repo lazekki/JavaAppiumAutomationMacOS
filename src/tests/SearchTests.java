@@ -3,6 +3,7 @@ package tests;
 import lib.CoreTestCase;
 import lib.ui.MainPageObject;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -31,9 +32,9 @@ public class SearchTests extends CoreTestCase {
     }
 
     @Test
-    public void testSearch() {
+    public void testSearch() throws Exception {
 
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
 
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
@@ -41,9 +42,9 @@ public class SearchTests extends CoreTestCase {
     }
 
     @Test
-    public void testCancelSearch() {
+    public void testCancelSearch() throws Exception {
 
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
 
         SearchPageObject.initSearchInput();
         SearchPageObject.waitForCancelButtonToAppear();
@@ -53,9 +54,9 @@ public class SearchTests extends CoreTestCase {
 
     @Test
     //Ex3 - refactoring for Ex8 homework
-    public void testCheckSearchResultAndCancelSearch() {
+    public void testCheckSearchResultAndCancelSearch() throws Exception {
 
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Moscow");
         assertThat("Amount of found articles more than 0 ", (SearchPageObject.getAmountOfFoundArticles() > 0));
@@ -104,9 +105,9 @@ public class SearchTests extends CoreTestCase {
     }
 
     @Test
-    public void testAmountOfNotEmptySearch() {
+    public void testAmountOfNotEmptySearch() throws Exception {
 
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         String search_line = "Linkin Park Discography";
         SearchPageObject.typeSearchLine(search_line);
@@ -119,9 +120,9 @@ public class SearchTests extends CoreTestCase {
     }
 
     @Test
-    public void testAmountOfEmptySearch() {
+    public void testAmountOfEmptySearch() throws Exception {
 
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         String search_line = "zxcvasdfqwer";
         SearchPageObject.typeSearchLine(search_line);
@@ -153,9 +154,9 @@ public class SearchTests extends CoreTestCase {
     }
 
     @Test
-    public void testListOfSearchResults() {
+    public void testListOfSearchResults() throws Exception {
 
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
 
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");

@@ -36,12 +36,12 @@ abstract public class SearchPageObject extends MainPageObject {
     public void initSearchInput() {
         this.waitForElementAndClick(SEARCH_INIT_ELEMENT,
                 "Cannot find and click search init element",
-                5
+                10
         );
 
         this.waitForElementPresent(SEARCH_INIT_ELEMENT,
                 "Cannot find search input after cicking search init element",
-                5
+                10
         );
     }
 
@@ -62,7 +62,7 @@ abstract public class SearchPageObject extends MainPageObject {
     public void clickCancelSearch() {
         this.waitForElementAndClick(SEARCH_CANCEL_BUTTON,
                 "Cannot find and click search cancel button",
-                5
+                10
         );
     }
 
@@ -70,7 +70,7 @@ abstract public class SearchPageObject extends MainPageObject {
         this.waitForElementAndSendKeys(SEARCH_INPUT,
                 search_line,
                 "Cannot find and type into search input",
-                5
+                10
                 );
     }
 
