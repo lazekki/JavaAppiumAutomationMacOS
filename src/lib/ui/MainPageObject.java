@@ -131,6 +131,24 @@ public class MainPageObject {
         return (element_location_by_y < screen_size_by_y);
     }
 
+    public void clickElementToTheRightUpperCorner(String locator, String error_message) {
+        //sample to move from locator to 1 level up (parent element): + "/.."
+        WebElement element = this.waitForElementPresent(locator + "/..", error_message);
+
+        int right_x = element.getLocation().getX();
+        int upper_y = element.getLocation().getY();
+        int lower_y = element.getSize().getHeight() + upper_y;
+        int middle_y = (upper_y + lower_y) / 2;
+        int width = element.getSize().getWidth();
+
+        int point_to_click_x = (right_x + width) - 3;
+        int point_to_click_y = middle_y;
+
+        TouchAction action = new TouchAction(driver);
+        action.tap(getPointOption(point_to_click_x, point_to_click_y)).perform();
+
+    }
+
     public void swipeElementToLeft(String locator, String error_message) {
         WebElement element = waitForElementPresent(
                 locator,
@@ -199,7 +217,8 @@ public class MainPageObject {
         } else {
             throw new IllegalArgumentException("Cannot get type of locator. Locator: " + locator_with_type);
         }
-
     }
+
+
 
 }

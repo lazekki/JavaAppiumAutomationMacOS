@@ -54,6 +54,7 @@ public class MyListsTests extends CoreTestCase {
         }
 
         MyListPageObject.swipeByArticleToDelete(article_title);
+
     }
 
     @Test
