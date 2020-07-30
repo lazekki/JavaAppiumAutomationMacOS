@@ -2,11 +2,11 @@ package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
 
-public class MyListsPageObject extends MainPageObject {
+abstract public class MyListsPageObject extends MainPageObject {
 
-    public static final String
-        FOLDER_BY_NAME_TPL="//*[@text='{FOLDER_NAME}']",
-        ARTICLE_BY_TITLE_TPL = "//*[@text='{TITLE}']";
+    protected static String
+        FOLDER_BY_NAME_TPL,
+        ARTICLE_BY_TITLE_TPL;
 
     private static String getFolderXPathByName(String name_of_folder) {
         return FOLDER_BY_NAME_TPL.replace("{FOLDER_NAME}", name_of_folder);
@@ -37,7 +37,7 @@ public class MyListsPageObject extends MainPageObject {
 
         this.swipeElementToLeft(
              article_xpath,
-             "Cannot find saved article" + article_title
+             "Cannot find saved article " + article_title
         );
         this.waitForArticleToDisappearByTitle(article_title);
     }

@@ -1,11 +1,14 @@
 package tests;
 
 import lib.CoreTestCase;
+import lib.Platform;
 import lib.ui.ArticlePageObject;
 import lib.ui.MyListsPageObject;
 import lib.ui.NavigationUI;
 import lib.ui.SearchPageObject;
 import lib.ui.factories.ArticlePageObjectFactory;
+import lib.ui.factories.MyListsPageObjectFactory;
+import lib.ui.factories.NavigationUIFactory;
 import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
@@ -16,6 +19,9 @@ public class MyListsTests extends CoreTestCase {
             MORE_ARTICLE_OPTIONS_XPATH = "xpath://android.widget.ImageView[@content-desc='More options']",
             MORE_ARTICLE_OPTIONS_XPATH_2 = "xpath:(//android.widget.ImageView[@content-desc=\"More options\"])[2]",
             READING_LIST_REMOVE_OPTION_ID = "id:org.wikipedia:id/reading_list_item_remove_text";
+
+    private static final String
+            name_of_folder = "Learning programming";
 
     @Test
     public void testSaveFirstArticleToMyList() throws Exception {
@@ -30,16 +36,23 @@ public class MyListsTests extends CoreTestCase {
         ArticlePageObject.waitForTitleElement();
 
         String article_title = ArticlePageObject.getArticleTitle();
-        String name_of_folder = "Learning programming";
 
-        ArticlePageObject.addArticleToMyList(name_of_folder);
+        if (Platform.getInstance().isAndroid()) {
+            ArticlePageObject.addArticleToMyList(name_of_folder);
+        } else {
+            ArticlePageObject.addArticlesToMySaved();
+        }
         ArticlePageObject.closeArticle();
 
-        NavigationUI NavigationUI = new NavigationUI(driver);
+        NavigationUI NavigationUI = NavigationUIFactory.get(driver);
         NavigationUI.clickMyList();
 
-        MyListsPageObject MyListPageObject = new MyListsPageObject(driver);
-        MyListPageObject.openFolderByName(name_of_folder);
+        MyListsPageObject MyListPageObject = MyListsPageObjectFactory.get(driver);
+
+        if(Platform.getInstance().isAndroid()) {
+            MyListPageObject.openFolderByName(name_of_folder);
+        }
+
         MyListPageObject.swipeByArticleToDelete(article_title);
     }
 
@@ -53,7 +66,7 @@ public class MyListsTests extends CoreTestCase {
         SearchPageObject.clickByArticleWithSubString("Object-oriented programming language");
         SearchPageObject.assertThereIsArticleWithTitle();
 
-        NavigationUI NavigationUI = new NavigationUI(driver);
+        NavigationUI NavigationUI = NavigationUIFactory.get(driver);
 
         NavigationUI.clickMoreOptions(MORE_ARTICLE_OPTIONS_XPATH);
         NavigationUI.clickAddToReadingList();

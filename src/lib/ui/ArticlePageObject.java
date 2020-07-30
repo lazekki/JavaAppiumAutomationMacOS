@@ -10,6 +10,7 @@ abstract public class ArticlePageObject extends MainPageObject {
         TITLE,
         FOOTER_ELEMENT,
         OPTIONS_BUTTON,
+        IOS_MY_LIST_OVERLAY_CLOSE_BUTTON,
         OPTIONS_ADD_TO_MY_LIST_BUTTON,
         ADD_TO_MY_LIST_OVERLAY,
         MY_LIST_NAME_INPUT,
@@ -48,8 +49,6 @@ abstract public class ArticlePageObject extends MainPageObject {
         } else {
             this.swipeUpTillElementAppear(FOOTER_ELEMENT, error_message, max_swipes);
         }
-
-
     }
 
     public void addArticleToMyList(String name_of_folder) {
@@ -90,6 +89,17 @@ abstract public class ArticlePageObject extends MainPageObject {
                 "Cannot press OK button to save an article name to reading list",
                 5
         );
+    }
+
+    public void addArticlesToMySaved() {
+        this.waitForElementAndClick(
+                OPTIONS_ADD_TO_MY_LIST_BUTTON,
+                "Cannot find option to add article to reading list",
+                5
+        );
+        this.waitForElementAndClick(IOS_MY_LIST_OVERLAY_CLOSE_BUTTON,
+                "Cannot find button to close overlay over of my lists",
+                5);
     }
 
     public void closeArticle() {
