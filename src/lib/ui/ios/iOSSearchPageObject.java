@@ -15,9 +15,13 @@ public class iOSSearchPageObject extends SearchPageObject {
         SEARCH_RESULT_BY_SUBSTRING_TPL = "xpath://XCUIElementTypeLink[contains(@name, '{SUBSTRING}')]";
         SEARCH_RESULT_ELEMENT = "xpath://XCUIElementTypeLink";
         SEARCH_EMPTY_RESULT_ELEMENT = "xpath://XCUIElementTypeStaticText[@name='No results found']";
+        ARTICLE_SEARCH_FIRST_TITLE_XPATH = "xpath://XCUIElementTypeOther[contains(@name, 'Java (programming language)')]";
+        ARTICLE_SEARCH_SECOND_TITLE_XPATH = "xpath://XCUIElementTypeOther[contains(@name, 'Java (software platform)')]";
         //TO DO for iOS tests:
         //ARTICLE_TITLE_ID = "id:org.wikipedia:id/view_page_title_text";
-        //ARTICLE_TITLE_XPATH = "xpath://*[@text='Java (software platform)']";
+        ARTICLE_TITLE_XPATH = "xpath://*[@name='Java (software platform)']";
+        ARTICLE_IN_SAVED_LIST_TITLE_XPATH = "xpath://XCUIElementTypeLink[contains(@name, 'Java (software platform) Set of several computer software products and specifications')]";
+        FIRST_ARTICLE_TITLE_XPATH = "xpath://*[@name='Java (programming language)']";
         //SEARCH_RESULT_ARTICLE_TITLE = "xpath://*[@resource-id='org.wikipedia:id/view_page_title_text']//*[@text='Java (programming language)']";
         //SEARCH_RESULT_ARTICLE_ITEM_CONTAINER_TPL =
         //        "xpath:"

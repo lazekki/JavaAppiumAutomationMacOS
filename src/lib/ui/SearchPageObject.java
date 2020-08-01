@@ -15,6 +15,10 @@ abstract public class SearchPageObject extends MainPageObject {
         SEARCH_EMPTY_RESULT_ELEMENT,
         ARTICLE_TITLE_ID,
         ARTICLE_TITLE_XPATH,
+        ARTICLE_IN_SAVED_LIST_TITLE_XPATH,
+        FIRST_ARTICLE_TITLE_XPATH,
+        ARTICLE_SEARCH_FIRST_TITLE_XPATH,
+        ARTICLE_SEARCH_SECOND_TITLE_XPATH,
         SEARCH_RESULT_ARTICLE_TITLE,
         SEARCH_RESULT_ARTICLE_ITEM_CONTAINER_TPL;
 
@@ -132,9 +136,37 @@ abstract public class SearchPageObject extends MainPageObject {
                 15);
     }
 
+    public void iOSAssertThereIsFirstArticleWithTitle() {
+        this.waitForElementPresent(ARTICLE_SEARCH_FIRST_TITLE_XPATH,
+                "",
+                30);
+    }
+
+    public void iOSAssertThereIsSecondArticleWithTitle() {
+        this.waitForElementPresent(ARTICLE_SEARCH_SECOND_TITLE_XPATH,
+                "",
+                30);
+    }
+
     public WebElement collectSearchResultAsElement() {
         return this.waitForElementAndClick(
                 ARTICLE_TITLE_XPATH,
+                "Cannot find article title",
+                15
+        );
+    }
+
+    public WebElement collectFromSavedListSearchResultAsElement() {
+        return this.waitForElementAndClick(
+                ARTICLE_IN_SAVED_LIST_TITLE_XPATH,
+                "Cannot find article title",
+                15
+        );
+    }
+
+    public WebElement collectFirstArticleSearchResultAsElement() {
+        return this.waitForElementAndClick(
+                FIRST_ARTICLE_TITLE_XPATH,
                 "Cannot find article title",
                 15
         );

@@ -97,9 +97,12 @@ abstract public class ArticlePageObject extends MainPageObject {
                 "Cannot find option to add article to reading list",
                 5
         );
+    }
+
+    public void closeOverlayIfSaveArticleFirstTime() {
         this.waitForElementAndClick(IOS_MY_LIST_OVERLAY_CLOSE_BUTTON,
                 "Cannot find button to close overlay over of my lists",
-                5);
+                30);
     }
 
     public void closeArticle() {
