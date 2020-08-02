@@ -23,11 +23,8 @@ public class iOSSearchPageObject extends SearchPageObject {
         ARTICLE_IN_SAVED_LIST_TITLE_XPATH = "xpath://XCUIElementTypeLink[contains(@name, 'Java (software platform) Set of several computer software products and specifications')]";
         FIRST_ARTICLE_TITLE_XPATH = "xpath://*[@name='Java (programming language)']";
         //SEARCH_RESULT_ARTICLE_TITLE = "xpath://*[@resource-id='org.wikipedia:id/view_page_title_text']//*[@text='Java (programming language)']";
-        //SEARCH_RESULT_ARTICLE_ITEM_CONTAINER_TPL =
-        //        "xpath:"
-        //                + "//*[@resource-id='org.wikipedia:id/search_container']"
-        //                + "//*[@resource-id='org.wikipedia:id/page_list_item_container']"
-        //                + "//*[@text='{TITLE_SUBSTRING}' or @text='{DESCRIPTION_SUBSTRING}']";
+        SEARCH_RESULT_ARTICLE_ITEM_CONTAINER_TPL =
+                "xpath://XCUIElementTypeLink[contains(@name, '{TITLE_SUBSTRING}') or contains (@name, '{DESCRIPTION_SUBSTRING}')]";
     }
 
     public iOSSearchPageObject(AppiumDriver driver) {
